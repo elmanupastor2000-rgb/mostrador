@@ -1,0 +1,27 @@
+{
+  "name": "Mostrador",
+  "short_name": "Mostrador",
+  "description": "Punto de venta e inventario del local. Funciona sin internet y escanea con la cámara.",
+  "id": ".",
+  "start_url": ".",
+  "scope": ".",
+  "display": "standalone",
+  "display_override": ["standalone", "minimal-ui"],
+  "orientation": "any",
+  "lang": "es-UY",
+  "dir": "ltr",
+  "background_color": "#F1EFE8",
+  "theme_color": "#F1EFE8",
+  "categories": ["business", "productivity", "finance"],
+  "icons": [
+    { "src": "icon-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any" },
+    { "src": "icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any" },
+    { "src": "icon-maskable-512.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable" },
+    { "src": "icon.svg", "sizes": "any", "type": "image/svg+xml", "purpose": "any" }
+  ],
+  "shortcuts": [
+    { "name": "Vender", "short_name": "Vender", "url": "./#/vender", "icons": [{ "src": "icon-192.png", "sizes": "192x192" }] },
+    { "name": "Caja", "short_name": "Caja", "url": "./#/caja", "icons": [{ "src": "icon-192.png", "sizes": "192x192" }] },
+    { "name": "Usar como lector", "short_name": "Lector", "url": "./#/escaner", "icons": [{ "src": "icon-192.png", "sizes": "192x192" }] }
+  ]
+}
