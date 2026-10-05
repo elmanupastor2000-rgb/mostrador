@@ -13,9 +13,9 @@
  *   (banners.jsx manda {type:'SKIP_WAITING'}): nunca se cambia la app debajo de
  *   una venta a medio cobrar.
  *
- * tools/postbuild.mjs reemplaza 0374bce40e por un hash del build.
+ * tools/postbuild.mjs reemplaza e7818f8fa6 por un hash del build.
  */
-const VERSION = '0374bce40e'
+const VERSION = 'e7818f8fa6'
 const CACHE = 'mostrador-' + VERSION
 const RUNTIME = 'mostrador-runtime'
 const PRECACHE = ['./', './index.html', './manifest.webmanifest', './icon.svg', './icon-192.png', './icon-512.png', './icon-maskable-512.png', './apple-touch-icon.png', './favicon-32.png']
