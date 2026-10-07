@@ -7,17 +7,25 @@
  * - .wasm del lector de códigos (zxing en jsDelivr): caché primero en una caché
  *   de "runtime" que sobrevive a las versiones (pesa ~1 MB, no tiene sentido
  *   bajarlo de nuevo en cada actualización).
+ * - Lector de facturas (carpeta ocr/, ~9,5 MB: motor de Tesseract + español):
+ *   caché primero en SU propia caché, que lleva en el nombre una "revisión" de
+ *   esos archivos (postbuild). Mientras los archivos no cambien, la caché
+ *   sobrevive a las versiones de la app y no se baja de nuevo; si cambian
+ *   (otra versión de Tesseract) la caché vieja se borra entera, así nunca
+ *   queda un motor viejo con un núcleo nuevo.
  * - El resto de los dominios externos (PeerJS, Open Food Facts…) NO se
  *   interceptan: son en vivo y no tienen sentido sin red.
  * - La versión nueva queda "esperando" hasta que el usuario toca "Actualizar"
  *   (banners.jsx manda {type:'SKIP_WAITING'}): nunca se cambia la app debajo de
  *   una venta a medio cobrar.
  *
- * tools/postbuild.mjs reemplaza e7818f8fa6 por un hash del build.
+ * tools/postbuild.mjs reemplaza f732ad0a62 por un hash del build.
  */
-const VERSION = 'e7818f8fa6'
+const VERSION = 'f732ad0a62'
 const CACHE = 'mostrador-' + VERSION
 const RUNTIME = 'mostrador-runtime'
+const OCR_REV = '1e5c6aab'
+const OCR_CACHE = 'mostrador-ocr-' + OCR_REV
 const PRECACHE = ['./', './index.html', './manifest.webmanifest', './icon.svg', './icon-192.png', './icon-512.png', './icon-maskable-512.png', './apple-touch-icon.png', './favicon-32.png']
 const WASM_HOSTS = ['cdn.jsdelivr.net', 'fastly.jsdelivr.net']
 const STATIC_RE = /\.(?:png|svg|ico|webmanifest|woff2?)$/i
@@ -33,6 +41,7 @@ function route(request, scopeUrl) {
   }
   if (!url.pathname.startsWith(scope.pathname)) return null
   if (url.pathname.endsWith('/sw.js')) return null
+  if (url.pathname.startsWith(scope.pathname + 'ocr/')) return 'ocr'
   // Antes que "navigate": abrir un ícono en una pestaña tiene que dar el ícono, no la app.
   if (STATIC_RE.test(url.pathname)) return 'static'
   const accept = (request.headers && request.headers.get && request.headers.get('accept')) || ''
@@ -89,7 +98,7 @@ self.addEventListener('activate', (event) => {
   event.waitUntil(
     (async () => {
       const keys = await caches.keys()
-      await Promise.all(keys.filter((k) => k.startsWith('mostrador-') && k !== CACHE && k !== RUNTIME).map((k) => caches.delete(k)))
+      await Promise.all(keys.filter((k) => k.startsWith('mostrador-') && k !== CACHE && k !== RUNTIME && k !== OCR_CACHE).map((k) => caches.delete(k)))
       await self.clients.claim()
     })(),
   )
@@ -106,8 +115,9 @@ self.addEventListener('fetch', (event) => {
   if (kind === 'html') event.respondWith(networkFirstHtml(event.request))
   else if (kind === 'static') event.respondWith(cacheFirst(event.request, CACHE))
   else if (kind === 'wasm') event.respondWith(cacheFirst(event.request, RUNTIME))
+  else if (kind === 'ocr') event.respondWith(cacheFirst(event.request, OCR_CACHE))
   else if (kind === 'same') event.respondWith(networkThenCache(event.request))
   // null → no se intercepta: el navegador hace la petición normal.
 })
 
-self.__mostrador = { route, VERSION, CACHE, RUNTIME, PRECACHE }
+self.__mostrador = { route, VERSION, CACHE, RUNTIME, OCR_CACHE, PRECACHE }
