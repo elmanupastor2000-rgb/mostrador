@@ -19,9 +19,9 @@
  *   (banners.jsx manda {type:'SKIP_WAITING'}): nunca se cambia la app debajo de
  *   una venta a medio cobrar.
  *
- * tools/postbuild.mjs reemplaza 98ae4caebc por un hash del build.
+ * tools/postbuild.mjs reemplaza 472b549b75 por un hash del build.
  */
-const VERSION = '98ae4caebc'
+const VERSION = '472b549b75'
 const CACHE = 'mostrador-' + VERSION
 const RUNTIME = 'mostrador-runtime'
 const OCR_REV = '1e5c6aab'
